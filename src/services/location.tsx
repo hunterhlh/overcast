@@ -10,8 +10,20 @@ export async function getUserLocation() {
     return null;
   }
 
+
+
+
   // Step 2: get the coordinates
   const position = await Location.getCurrentPositionAsync({});
-  console.log('Location:', position.coords.latitude, position.coords.longitude);
-  return position.coords;
+
+  const locationResults = await Location.reverseGeocodeAsync({
+    latitude: position.coords.latitude,
+    longitude: position.coords.longitude,
+  });
+
+  console.log('Location:', position.coords.latitude, position.coords.longitude, locationResults);
+
+
+  
+  return {locat: position.coords, city: locationResults[0].city};
 }
