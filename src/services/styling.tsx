@@ -1,8 +1,6 @@
-// Takes the Google Weather condition type and returns the colors for it.
-// Usage: const theme = getStyling(weather?.weatherCondition?.type);
 
 export type WeatherTheme = {
-  colors: readonly [string, string, string]; // sky gradient, top → bottom
+  colors: readonly [string, string, string]; 
   text: string;
 };
 
@@ -72,7 +70,6 @@ export function getStyling(type?: string): WeatherTheme {
     case 'HEAVY_THUNDERSTORM':
       return { colors: ['#100a23', '#2b1540', '#5e244d'], text: '#ebeff4' };
 
-    // TYPE_UNSPECIFIED or anything new Google adds
     default:
       return { colors: ['#b9bcd1', '#b5c3d1', '#e5ddd0'], text: '#151b21' };
   }
