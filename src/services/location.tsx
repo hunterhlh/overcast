@@ -25,5 +25,5 @@ export async function getUserLocation() {
 
 
   
-  return {locat: position.coords, city: locationResults[0].city};
+  return {locat: position.coords, city: locationResults[0].city, state:locationResults[0].region};
 }
