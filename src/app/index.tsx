@@ -14,8 +14,10 @@ const FONT = Platform.select({ ios: 'Helvetica Neue', android: 'sans-serif' });
 
 export default function HomeScreen() {
 
-  const [weather, setWeather] = useState<any>(null);
-  
+  const [weather, setWeatherCurrent] = useState<any>(null);
+
+  const [weatherHourly, setWeatherHourly] = useState<any>(null);
+
   const [city, setCity] = useState<any>(null);
 
   const [state, setState] = useState<any>(null);
@@ -23,12 +25,29 @@ export default function HomeScreen() {
   const [text, onChangeText] = useState('');
 
 
+const hours = (weatherHourly?.forecastHours ?? []).slice(1, 9).map((hour: any) => ({
+  time: hour.displayDateTime.hours,
+  temp: Math.round(hour.temperature.degrees),
+  condition: hour.weatherCondition.type,
+}));
+
+//const now = {
+//  time: "now",
+//  temp: Math.round(weather?.temperature?.degrees),
+//  condition: weather?.weatherCondition?.type,
+//};
+
+
+const maxTemp = Math.max(...hours.map((hour: any) => hour.temp));
+const minTemp = Math.min(...hours.map((hour: any) => hour.temp));
+
+
+
 
   useEffect(() => {
 
-
-
     async function load() {
+
     const cords = await getUserLocation();
     if (!cords) return null;
 
@@ -37,7 +56,8 @@ export default function HomeScreen() {
 
 
     getCurrentWeather(cords.locat.latitude, cords.locat.longitude).then((weatherData) => {
-      setWeather(weatherData);
+      setWeatherCurrent(weatherData.current);
+      setWeatherHourly(weatherData.hourly);
     });
   }
 
@@ -47,7 +67,7 @@ export default function HomeScreen() {
   const theme = getStyling(weather?.weatherCondition?.type);
 
 return (
-<LinearGradient colors={theme.colors} locations={[0, 0.45, 1]} style={styles.gradient}>
+<LinearGradient colors={theme.colors} locations={[0, 0.45, 1]} style={styles.gradient}>  
   <SafeAreaView style={styles.content}>
     <Text style={[styles.city, {color: theme.text }]}>{city}, {state}</Text>
     <Text style={[ styles.hero, {color: theme.text }]}>{Math.round(weather?.temperature?.degrees)}°</Text>
@@ -71,7 +91,15 @@ return (
         <Text style={{ color: theme.text }}>Radar</Text>
       </Pressable>
     </View>
-
+    <View style={styles.hourlyCard}>
+      {hours.map((hour: any) => (
+        <View key={hour.time} style={styles.hourCol}>
+          <Text style={{ color: theme.text }}>{hour.temp}°</Text>
+          <View key={hour.time} style={[styles.bar, { backgroundColor: getStyling(hour.condition).colors[0], height: 30 + ((hour.temp - minTemp) / (maxTemp - minTemp)) * 66 }]} />
+          <Text style={{ color: theme.text }}>{hour.time}</Text>
+        </View>
+      ))}
+    </View>
 
   </SafeAreaView>
 </LinearGradient>
@@ -155,4 +183,25 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: '3%',  
   },
+  hourlyCard: {
+    flexDirection: 'row',
+    gap: 6,
+    alignSelf: 'stretch',
+    height: '23%',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderRadius: 24,
+    marginTop: 20,
+    padding: 16
+},
+  bar: {
+    width: 35,
+    height: 100,
+    borderRadius: 10,
+},
+hourCol: {
+  flex: 1,
+  alignItems: 'center',
+  gap: 6,
+  justifyContent: 'flex-end',
+},
 });
