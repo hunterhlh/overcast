@@ -3,7 +3,7 @@ import { getStyling } from '@/services/styling';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getCurrentWeather } from '../services/weatherAPI';
 
@@ -18,11 +18,16 @@ export default function HomeScreen() {
 
   const [weatherHourly, setWeatherHourly] = useState<any>(null);
 
+  const [weatherDaily, setWeatherDaily] = useState<any>(null);
+
   const [city, setCity] = useState<any>(null);
 
   const [state, setState] = useState<any>(null);
 
   const [text, onChangeText] = useState('');
+
+
+
 
 
 const hours = (weatherHourly?.forecastHours ?? []).slice(1, 9).map((hour: any) => ({
@@ -31,11 +36,16 @@ const hours = (weatherHourly?.forecastHours ?? []).slice(1, 9).map((hour: any) =
   condition: hour.weatherCondition.type,
 }));
 
-//const now = {
-//  time: "now",
-//  temp: Math.round(weather?.temperature?.degrees),
-//  condition: weather?.weatherCondition?.type,
-//};
+
+const days = (weatherDaily?.forecastDays ?? []).map((day: any) => ({
+  day: day.displayDate.day,
+  condition: day.daytimeForecast.weatherCondition.description.text,
+  rainPercent: day.daytimeForecast.precipitation.percent,
+  tempHigh: Math.round(day.maxTemperature.degrees),
+  tempLow: Math.round(day.minTemperature.degrees),
+}));
+
+
 
 
 const maxTemp = Math.max(...hours.map((hour: any) => hour.temp));
@@ -58,6 +68,7 @@ const minTemp = Math.min(...hours.map((hour: any) => hour.temp));
     getCurrentWeather(cords.locat.latitude, cords.locat.longitude).then((weatherData) => {
       setWeatherCurrent(weatherData.current);
       setWeatherHourly(weatherData.hourly);
+      setWeatherDaily(weatherData.daily);
     });
   }
 
@@ -68,6 +79,7 @@ const minTemp = Math.min(...hours.map((hour: any) => hour.temp));
 
 return (
 <LinearGradient colors={theme.colors} locations={[0, 0.45, 1]} style={styles.gradient}>  
+  <ScrollView>
   <SafeAreaView style={styles.content}>
     <Text style={[styles.city, {color: theme.text }]}>{city}, {state}</Text>
     <Text style={[ styles.hero, {color: theme.text }]}>{Math.round(weather?.temperature?.degrees)}°</Text>
@@ -92,16 +104,31 @@ return (
       </Pressable>
     </View>
     <View style={styles.hourlyCard}>
+      <Text style={{ color: theme.text }}>HOURLY</Text>
+      <View style={{flexDirection: 'row', gap: 6, paddingTop: 10,}}>
       {hours.map((hour: any) => (
         <View key={hour.time} style={styles.hourCol}>
           <Text style={{ color: theme.text }}>{hour.temp}°</Text>
           <View key={hour.time} style={[styles.bar, { backgroundColor: getStyling(hour.condition).colors[0], height: 30 + ((hour.temp - minTemp) / (maxTemp - minTemp)) * 66 }]} />
-          <Text style={{ color: theme.text }}>{hour.time}</Text>
+          <Text style={{ color: theme.text }}>{hour.time % 12}</Text>
+        </View>
+      ))}
+      </View>
+    </View>
+
+    <View style={styles.dailyCard}>
+      {days.map((day: any) => (
+        <View key={day.day} style={[styles.dayRow, { borderBottomColor: theme.text + '80' }]}>
+          <Text style={{ color: theme.text }}>{day.day}</Text>
+          <Text style={{ color: theme.text }}>{day.condition}</Text>
+          <Text style={{ color: theme.text }}>{day.rainPercent}%</Text>
+          <Text style={{ color: theme.text }}>{day.tempHigh}°</Text>
+          <Text style={{ color: theme.text }}>{day.tempLow}°</Text>
         </View>
       ))}
     </View>
-
   </SafeAreaView>
+  </ScrollView>
 </LinearGradient>
 );
 }
@@ -122,7 +149,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   hero: {
-    paddingTop: '14%',
+    paddingTop: '12%',
     paddingLeft: '7%',
     fontFamily: FONT,
     fontSize: 135,
@@ -184,13 +211,11 @@ const styles = StyleSheet.create({
     marginTop: '3%',  
   },
   hourlyCard: {
-    flexDirection: 'row',
-    gap: 6,
     alignSelf: 'stretch',
-    height: '23%',
+    height: '200',
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
     borderRadius: 24,
-    marginTop: 20,
+    marginTop: 15,
     padding: 16
 },
   bar: {
@@ -204,4 +229,23 @@ hourCol: {
   gap: 6,
   justifyContent: 'flex-end',
 },
+  dailyCard: {
+    flexDirection: 'column',
+    gap: 6,
+    alignSelf: 'stretch',
+    height: '500',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderRadius: 24,
+    marginTop: 20,
+    padding: 16
+},
+
+dayRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 10,
+  paddingVertical: 10,
+  borderBottomWidth: StyleSheet.hairlineWidth,
+},
+
 });
