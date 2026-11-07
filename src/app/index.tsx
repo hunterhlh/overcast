@@ -12,6 +12,22 @@ import { getCurrentWeather } from '../services/weatherAPI';
 const FONT = Platform.select({ ios: 'Helvetica Neue', android: 'sans-serif' });
 
 
+function convertDay(year: number, month: number, day: number) {
+const dayOfMonth = new Date().getDate(); 
+const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
+const date = new Date(year, month - 1, day);
+const dayName = daysOfWeek[date.getDay()];
+
+if (dayOfMonth === day) {
+  return 'Today';
+}else{
+  return dayName
+}
+}
+
+
+
+
 export default function HomeScreen() {
 
   const [weather, setWeatherCurrent] = useState<any>(null);
@@ -38,7 +54,7 @@ const hours = (weatherHourly?.forecastHours ?? []).slice(1, 9).map((hour: any) =
 
 
 const days = (weatherDaily?.forecastDays ?? []).map((day: any) => ({
-  day: day.displayDate.day,
+  dayName: convertDay(day.displayDate.year, day.displayDate.month, day.displayDate.day),
   condition: day.daytimeForecast.weatherCondition.description.text,
   rainPercent: day.daytimeForecast.precipitation.percent,
   tempHigh: Math.round(day.maxTemperature.degrees),
@@ -85,8 +101,8 @@ return (
     <Text style={[ styles.hero, {color: theme.text }]}>{Math.round(weather?.temperature?.degrees)}°</Text>
     <Text style={[ styles.condition, {color: theme.text }]}>{weather?.weatherCondition?.description?.text}</Text>
     <View style={styles.rangeRow}>
-      <Text style={[ styles.range, {color: theme.text }]}>High: {Math.round(weather?.currentConditionsHistory?.maxTemperature?.degrees)}°</Text>
-      <Text style={[ styles.range, {color: theme.text }]}>Low: {Math.round(weather?.currentConditionsHistory?.minTemperature?.degrees)}°</Text>
+      <Text style={[ styles.range, {color: theme.text }]}>High: {Math.round(weatherDaily?.forecastDays?.[0]?.maxTemperature?.degrees)}°</Text>
+      <Text style={[ styles.range, {color: theme.text }]}>Low: {Math.round(weatherDaily?.forecastDays?.[0]?.minTemperature?.degrees)}°</Text>
       <Text style={[ styles.range, {color: theme.text }]}>Feels like: {Math.round(weather?.feelsLikeTemperature?.degrees)}°</Text>
     </View>
     <Text style={[ styles.body, {color: theme.text }]}>{"Clouds break up after 4 PM. Light rain likely Tuesday morning"}</Text>
@@ -119,11 +135,13 @@ return (
     <View style={styles.dailyCard}>
       {days.map((day: any) => (
         <View key={day.day} style={[styles.dayRow, { borderBottomColor: theme.text + '80' }]}>
-          <Text style={{ color: theme.text }}>{day.day}</Text>
-          <Text style={{ color: theme.text }}>{day.condition}</Text>
-          <Text style={{ color: theme.text }}>{day.rainPercent}%</Text>
-          <Text style={{ color: theme.text }}>{day.tempHigh}°</Text>
-          <Text style={{ color: theme.text }}>{day.tempLow}°</Text>
+          <Text style={[styles.dayName, { color: theme.text }]}>{day.dayName}</Text>
+          <Text style={[styles.dayCondition,{ color: theme.text }]}>{day.condition}</Text>
+          {day.rainPercent > 15 && (
+          <Text style={styles.dayRain}>{day.rainPercent}%</Text>
+          )}
+          <Text style={[styles.dayHigh, { color: theme.text }]}>{day.tempHigh}°</Text>
+          <Text style={[styles.dayLow, { color: theme.text }]}>{day.tempLow}°</Text>
         </View>
       ))}
     </View>
@@ -239,13 +257,49 @@ hourCol: {
     marginTop: 20,
     padding: 16
 },
-
 dayRow: {
   flexDirection: 'row',
   alignItems: 'center',
   gap: 10,
   paddingVertical: 10,
   borderBottomWidth: StyleSheet.hairlineWidth,
+},
+dayText: {
+  fontWeight: 'bold',
+},
+dayName: {
+  width: 60,
+  fontFamily: FONT,
+  fontSize: 17,
+  fontWeight: '500',
+},
+dayCondition: {
+  flex: 1,
+  fontFamily: FONT,
+  fontSize: 17,
+  fontWeight: '300',
+},
+dayRain: {
+  width: 30,
+  fontFamily: FONT,
+  fontSize: 15,
+  color: '#62a0ca',
+},
+dayHigh: {
+  width: 40,
+  textAlign: 'right',
+  fontFamily: FONT,
+  fontSize: 17,
+  fontWeight: '500',
+  fontVariant: ['tabular-nums'],
+},
+dayLow: {
+  width: 34,
+  textAlign: 'right',
+  fontFamily: FONT,
+  fontSize: 17,
+  fontVariant: ['tabular-nums'],
+  fontWeight: '300',
 },
 
 });

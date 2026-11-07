@@ -26,7 +26,7 @@ export async function getCurrentWeather(lat: number, long: number) {
   const urlDaily =
     `https://weather.googleapis.com/v1/forecast/days:lookup` +
     `?key=${process.env.EXPO_PUBLIC_WEATHER_API_KEY}` +
-    `&location.latitude=${lat}&location.longitude=${long}&days=7&pageSize=7&units_system=IMPERIAL`;
+    `&location.latitude=${lat}&location.longitude=${long}&days=10&pageSize=10&units_system=IMPERIAL`;
 
   const resDaily = await fetch(urlDaily);
   const dataDaily = await resDaily.json();
