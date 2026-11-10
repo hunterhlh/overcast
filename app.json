@@ -49,6 +49,12 @@
         "projectId": "0a54068e-5752-4ea5-9c1e-97abaeae0a1f"
       }
     },
-    "owner": "hunterhlh"
+    "owner": "hunterhlh",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0a54068e-5752-4ea5-9c1e-97abaeae0a1f"
+    }
   }
 }
