@@ -1,3 +1,4 @@
+import { getSummary } from "@/services/claudeAPI";
 import { getUserLocation } from "@/services/location";
 import { getStyling } from "@/services/styling";
 import { LinearGradient } from "expo-linear-gradient";
@@ -38,12 +39,39 @@ const formatTime = (hourlyHour: Date) => {
   });
 };
 
+function buildClaudeData(daily: any) {
+  return (daily?.forecastDays ?? []).slice(0, 5).map((info: any) => ({
+    startTime: info.interval.startTime,
+    endTime: info.interval.endTime,
+    condition: info.daytimeForecast.weatherCondition.description.text,
+    rainPercent: info.daytimeForecast.precipitation.probability.percent,
+    tempHigh: Math.round(info.maxTemperature.degrees),
+    tempLow: Math.round(info.minTemperature.degrees),
+    snowQpf: info.daytimeForecast.precipitation.snowQpf.quantity,
+    liquidQpf: info.daytimeForecast.precipitation.qpf.quantity,
+    windDirection: info.daytimeForecast.wind.direction.cardinal,
+    windSpeed: info.daytimeForecast.wind?.speed?.value,
+    windGust: info.daytimeForecast.wind?.gust?.value,
+    relHumidity: info.daytimeForecast.relativeHumidity,
+    uvIndex: info.daytimeForecast.uvIndex,
+    cloudCover: info.daytimeForecast.cloudCover,
+    startTimeNight: info.nighttimeForecast.interval.startTime,
+    endTimeNight: info.nighttimeForecast.interval.endTime,
+    conditionNight: info.nighttimeForecast.weatherCondition.description.text,
+    rainPercentNight: info.nighttimeForecast.precipitation.probability.percent,
+    snowQpfNight: info.nighttimeForecast.precipitation.snowQpf.quantity,
+    liquidQpfNight: info.nighttimeForecast.precipitation.qpf.quantity,
+  }));
+}
+
 export default function HomeScreen() {
   const [weather, setWeatherCurrent] = useState<any>(null);
 
   const [weatherHourly, setWeatherHourly] = useState<any>(null);
 
   const [weatherDaily, setWeatherDaily] = useState<any>(null);
+
+  const [summary, setSummary] = useState<any>(null);
 
   const [city, setCity] = useState<any>(null);
 
@@ -82,18 +110,22 @@ export default function HomeScreen() {
 
   async function load() {
     const cords = await getUserLocation();
-    if (!cords) return null;
+    if (!cords) return;
 
     setCity(cords.city);
     setState(cords.state);
 
-    getCurrentWeather(cords.locat.latitude, cords.locat.longitude).then(
-      (weatherData) => {
-        setWeatherCurrent(weatherData.current);
-        setWeatherHourly(weatherData.hourly);
-        setWeatherDaily(weatherData.daily);
-      },
+    const weatherData = await getCurrentWeather(
+      cords.locat.latitude,
+      cords.locat.longitude,
     );
+    setWeatherCurrent(weatherData.current);
+    setWeatherHourly(weatherData.hourly);
+    setWeatherDaily(weatherData.daily);
+
+    const claudeData = buildClaudeData(weatherData.daily);
+    const text = await getSummary(JSON.stringify(claudeData));
+    setSummary(text);
   }
 
   const onRefresh = async () => {
@@ -155,7 +187,7 @@ export default function HomeScreen() {
             </Text>
           </View>
           <Text style={[styles.body, { color: theme.text }]}>
-            {"Clouds break up after 4 PM. Light rain likely Tuesday morning"}
+            {summary ?? "Loading Forcast..."}
           </Text>
           <View style={styles.inputRow}>
             <TextInput
@@ -200,7 +232,7 @@ export default function HomeScreen() {
           <View style={styles.dailyCard}>
             {days.map((day: any) => (
               <View
-                key={day.day}
+                key={day.dayName}
                 style={[
                   styles.dayRow,
                   { borderBottomColor: theme.text + "80" },
