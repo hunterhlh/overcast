@@ -39,6 +39,16 @@ const formatTime = (hourlyHour: Date) => {
   });
 };
 
+const formatCurrentTime = (currentTime: string) => {
+  return new Date(currentTime)
+    .toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+    .replace(/\u202F/g, " ");
+};
+
 function buildClaudeData(daily: any) {
   return (daily?.forecastDays ?? []).slice(0, 7).map((info: any) => ({
     startTime: info.interval.startTime,
@@ -151,8 +161,10 @@ export default function HomeScreen() {
       locations={[0, 0.45, 1]}
       style={styles.gradient}
     >
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
         <ScrollView
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.content}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -160,6 +172,9 @@ export default function HomeScreen() {
         >
           <Text style={[styles.city, { color: theme.text }]}>
             {city}, {state}
+          </Text>
+          <Text style={[styles.update, { color: theme.text }]}>
+            Last updated: {formatCurrentTime(weather?.currentTime)}
           </Text>
           <Text style={[styles.hero, { color: theme.text }]}>
             {Math.round(weather?.temperature?.degrees)}°
@@ -230,7 +245,7 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.dailyCard}>
-            <Text style={{ color: theme.text }}>NEXT 7 DAYS</Text>
+            <Text style={{ color: theme.text }}>7 DAY FORECAST</Text>
             {days.map((day: any, i: number) => (
               <View
                 key={day.dayName}
@@ -272,14 +287,21 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingTop: 16,
     paddingHorizontal: 24,
+    paddingBottom: 40,
   },
   city: {
     fontFamily: FONT,
     fontSize: 20,
     fontWeight: "600",
   },
+  update: {
+    fontFamily: FONT,
+    fontSize: 16,
+    fontWeight: "300",
+    paddingTop: 5,
+  },
   hero: {
-    paddingTop: "12%",
+    paddingTop: "10%",
     paddingLeft: "7%",
     fontFamily: FONT,
     fontSize: 135,
@@ -362,7 +384,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 6,
     alignSelf: "stretch",
-    height: "375",
+    height: "365",
     backgroundColor: "rgba(255, 255, 255, 0.25)",
     borderRadius: 24,
     marginTop: 20,
