@@ -1,6 +1,7 @@
 import { getSummary } from "@/services/claudeAPI";
 import { getUserLocation } from "@/services/location";
 import { getStyling } from "@/services/styling";
+import { getCurrentWeather } from "@/services/weatherAPI";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -15,7 +16,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getCurrentWeather } from "../services/weatherAPI";
 
 const FONT = Platform.select({ ios: "Helvetica Neue", android: "sans-serif" });
 
@@ -215,9 +215,9 @@ export default function HomeScreen() {
 
             <Pressable
               style={styles.radarButton}
-              onPress={() => router.navigate("/radar")}
+              onPress={() => router.navigate("/details")}
             >
-              <Text style={{ color: theme.text }}>Radar</Text>
+              <Text style={{ color: theme.text }}>Details</Text>
             </Pressable>
           </View>
           <View style={styles.hourlyCard}>
@@ -388,6 +388,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.25)",
     borderRadius: 24,
     marginTop: 20,
+    marginBottom: 80,
     padding: 16,
   },
   dayRow: {

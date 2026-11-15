@@ -29,9 +29,14 @@ export default function Radar() {
         initialRegion={{
           latitude: locationData.locat.latitude,
           longitude: locationData.locat.longitude,
-          latitudeDelta: 3,
-          longitudeDelta: 3,
+          latitudeDelta: 7,
+          longitudeDelta: 7,
         }}
+        scrollEnabled={false}
+        zoomEnabled={false}
+        rotateEnabled={false}
+        pitchEnabled={false}
+        scrollDuringRotateOrZoomEnabled={false}
       >
         {radarData?.snapshot && (
           <UrlTile
