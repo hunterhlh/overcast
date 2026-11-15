@@ -40,7 +40,7 @@ const formatTime = (hourlyHour: Date) => {
 };
 
 function buildClaudeData(daily: any) {
-  return (daily?.forecastDays ?? []).slice(0, 5).map((info: any) => ({
+  return (daily?.forecastDays ?? []).slice(0, 7).map((info: any) => ({
     startTime: info.interval.startTime,
     endTime: info.interval.endTime,
     condition: info.daytimeForecast.weatherCondition.description.text,
@@ -143,7 +143,7 @@ export default function HomeScreen() {
 
   useEffect(() => {}, []);
 
-  const theme = getStyling(weather?.weatherCondition?.type);
+  const theme = getStyling(weather?.weatherCondition?.type, weather?.isDaytime);
 
   return (
     <LinearGradient
@@ -230,12 +230,14 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.dailyCard}>
-            {days.map((day: any) => (
+            <Text style={{ color: theme.text }}>NEXT 7 DAYS</Text>
+            {days.map((day: any, i: number) => (
               <View
                 key={day.dayName}
                 style={[
                   styles.dayRow,
                   { borderBottomColor: theme.text + "80" },
+                  i === 6 && { borderBottomWidth: 0 },
                 ]}
               >
                 <Text style={[styles.dayName, { color: theme.text }]}>
@@ -360,7 +362,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 6,
     alignSelf: "stretch",
-    height: "500",
+    height: "375",
     backgroundColor: "rgba(255, 255, 255, 0.25)",
     borderRadius: 24,
     marginTop: 20,
