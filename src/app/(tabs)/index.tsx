@@ -119,6 +119,7 @@ export default function HomeScreen() {
   }));
 
   async function load() {
+    //The driver that gets the data: location, weather, Claude chat
     const cords = await getUserLocation();
     if (!cords) return;
 
@@ -139,12 +140,14 @@ export default function HomeScreen() {
   }
 
   const onRefresh = async () => {
+    //Gets called when the user refreshes the page with pull down
     setRefreshing(true);
     await load();
     setRefreshing(false);
   };
 
   useEffect(() => {
+    //Gets called on the page load
     load();
   }, []);
 

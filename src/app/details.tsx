@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const FONT = Platform.select({ ios: "Helvetica Neue", android: "sans-serif" });
 
 const formatCurrentTime = (currentTime: string) => {
+  //Function, using arrow syntax
   return new Date(currentTime)
     .toLocaleTimeString("en-US", {
       hour: "numeric",
@@ -26,6 +27,7 @@ const formatCurrentTime = (currentTime: string) => {
 };
 
 function DetailCardComponent({
+  // Function / Component, a funtion but passes back JSX rather than a value
   title,
   value,
   description,
@@ -89,6 +91,7 @@ function rainLabel(rain: number) {
 }
 
 const SHORT_DIRECTION: Record<string, string> = {
+  //Object, just stores the data, holds a list of pairs
   NORTH: "North",
   NORTHEAST: "NorthEast",
   EAST: "East",
@@ -107,6 +110,8 @@ export default function Details() {
   const [state, setState] = useState<any>(null);
 
   const [weather, setWeatherCurrent] = useState<any>(null);
+
+  const theme = getStyling(weather?.weatherCondition?.type, weather?.isDaytime);
 
   async function load() {
     const cords = await getUserLocation();
@@ -127,11 +132,10 @@ export default function Details() {
     await load();
     setRefreshing(false);
   };
+
   useEffect(() => {
     load();
   }, []);
-
-  const theme = getStyling(weather?.weatherCondition?.type, weather?.isDaytime);
 
   return (
     <LinearGradient
