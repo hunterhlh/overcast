@@ -215,7 +215,10 @@ export default function HomeScreen() {
 
             <Pressable
               style={styles.radarButton}
-              onPress={() => router.navigate("/details")}
+              onPress={() => {
+                console.log("DETAILS BUTTON PRESSED");
+                router.navigate("/details");
+              }}
             >
               <Text style={{ color: theme.text }}>Details</Text>
             </Pressable>

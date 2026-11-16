@@ -15,7 +15,7 @@ export async function getCurrentWeather(lat: number, long: number) {
 
   const resHourly = await fetch(urlHourly);
   const dataHourly = await resHourly.json();
-  console.log(JSON.stringify(dataHourly.forecastHours?.[0], null, 2));
+  //console.log(JSON.stringify(dataHourly.forecastHours?.[0], null, 2));
 
   const urlDaily =
     `https://weather.googleapis.com/v1/forecast/days:lookup` +
@@ -24,7 +24,7 @@ export async function getCurrentWeather(lat: number, long: number) {
 
   const resDaily = await fetch(urlDaily);
   const dataDaily = await resDaily.json();
-  console.log(JSON.stringify(dataDaily.forecastDays?.[0], null, 2));
+  //console.log(JSON.stringify(dataDaily.forecastDays?.[0], null, 2));
 
   return { current: data, hourly: dataHourly, daily: dataDaily };
 }
