@@ -31,3 +31,21 @@ export async function getUserLocation() {
     state: locationResults[0].region,
   };
 }
+
+export async function getCityLocation(search: string) {
+  const results = await Location.geocodeAsync(search);
+  if (results.length === 0) return null;
+
+  const { latitude, longitude } = results[0];
+
+  const locationResults = await Location.reverseGeocodeAsync({
+    latitude: latitude,
+    longitude: longitude,
+  });
+
+  return {
+    locat: { latitude, longitude },
+    city: locationResults[0].city,
+    state: locationResults[0].region,
+  };
+}

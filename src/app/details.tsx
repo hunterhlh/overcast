@@ -9,7 +9,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -218,6 +218,19 @@ export default function Details() {
               theme={theme}
             />
           </View>
+
+          <View style={styles.columnCard}>
+            <View style={styles.dataCard}>
+              <View style={styles.daytimeCard}>
+                <Text style={[styles.titleFormat, { color: theme.text }]}>
+                  DAYLIGHT{" "}
+                </Text>
+                <Text style={[styles.titleFormat, { color: theme.text }]}>
+                  DAYLIGHT{" "}
+                </Text>
+              </View>
+            </View>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -279,5 +292,12 @@ const styles = StyleSheet.create({
     fontFamily: FONT,
     fontSize: 15,
     fontWeight: "400",
+  },
+  daytimeCard: {
+    flexDirection: "row",
+    gap: 18,
+    alignSelf: "stretch",
+    flex: 1,
+    marginTop: 3,
   },
 });
