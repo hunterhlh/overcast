@@ -37,12 +37,8 @@ export default function Locations() {
     weatherLocal?.isDaytime,
   );
 
-
-
-async function searchCity(){
-
-
-      const cords = await getCityLocation(text);
+  async function searchCity() {
+    const cords = await getCityLocation(text);
     if (!cords) return;
 
     setCity(cords.city);
@@ -52,25 +48,21 @@ async function searchCity(){
       cords.locat.latitude,
       cords.locat.longitude,
     );
-    setWeatherCurrent(weatherData.current);
-
 
     const newPlace = {
-    city: cords.city,
-    state: cords.state,
-    lat: cords.locat.latitude,
-    lng: cords.locat.longitude,
-    weather: weatherData.current,
-    condition: weatherData?.current?.weatherCondition?.text,
-  };
+      city: cords.city,
+      state: cords.state,
+      lat: cords.locat.latitude,
+      lng: cords.locat.longitude,
+      weather: weatherData.current,
+      condition: weatherData?.current?.weatherCondition?.text,
+      high: weatherData.daily?.forecastDays?.[0]?.maxTemperature?.degrees ?? 0,
+      low: weatherData.daily?.forecastDays?.[0]?.minTemperature?.degrees ?? 0,
+    };
 
-  setPlaces([...places, newPlace]);
-  onChangeText("");
-}
-
-
-
-
+    setPlaces([...places, newPlace]);
+    onChangeText("");
+  }
 
   async function load() {
     const cordsLocal = await getUserLocation();
@@ -84,8 +76,6 @@ async function searchCity(){
       cordsLocal.locat.longitude,
     );
     setWeatherCurrentLocal(weatherDataLocal.current);
-
-
   }
 
   const onRefresh = async () => {
@@ -124,22 +114,25 @@ async function searchCity(){
             onSubmitEditing={searchCity}
             returnKeyType="search"
           />
-{places.map((place) => (
-  <View key={`${place.city}-${place.state}`} style={styles.placeCard}>
-    <Text style={[styles.placeLocation, { color: theme.text }]}>
-      {place.isCurrent ? "My Location" : `${place.city}`}
-    </Text>
-    <Text style={{ color: theme.text }}>
-      {(place.condition ?? 0)}
-    </Text>
-    <Text style={{ color: theme.text }}>
-      {Math.round(place.weather?.temperature?.degrees ?? 0)}°
-    </Text>
-    <Text style={{ color: theme.text }}>
-      {Math.round(place.weather?.temperature?.degrees ?? 0)}°
-    </Text>
-  </View>
-))}
+          {places.map((place) => (
+            <View key={`${place.city}-${place.state}`} style={styles.placeCard}>
+              <Text style={[styles.placeLocation, { color: theme.text }]}>
+                {place.isCurrent ? "My Location" : `${place.city}`}
+              </Text>
+              <Text style={{ color: theme.text }}>
+                {place.weather?.weatherCondition?.description?.text ?? "null"}
+              </Text>
+              <Text style={{ color: theme.text }}>
+                Current: {Math.round(place.weather.temperature.degrees ?? 0)}°
+              </Text>
+              <Text style={{ color: theme.text }}>
+                H: {Math.round(place.high ?? 0)}°
+              </Text>
+              <Text style={{ color: theme.text }}>
+                L: {Math.round(place.low ?? 0)}°
+              </Text>
+            </View>
+          ))}
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -178,9 +171,9 @@ const styles = StyleSheet.create({
     fontFamily: FONT,
     fontSize: 17,
     marginTop: "6%",
-    marginBottom: "3%"
+    marginBottom: "3%",
   },
-    placeCard: {
+  placeCard: {
     flex: 1,
     alignSelf: "stretch",
     backgroundColor: "rgba(255, 255, 255, 0.25)",
@@ -189,10 +182,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: "5%",
   },
-    placeLocation: {
+  placeLocation: {
     fontFamily: FONT,
     fontSize: 25,
-    fontWeight: "600",
+    fontWeight: "700",
     paddingTop: 5,
     marginBottom: 20,
   },

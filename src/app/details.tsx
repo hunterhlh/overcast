@@ -9,7 +9,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -189,7 +189,7 @@ export default function Details() {
           <View style={styles.columnCard}>
             <DetailCardComponent
               title="PRESSURE"
-              value={`${Math.round(weather?.airPressure?.meanSeaLevelMillibars ?? 0)}`}
+              value={`${((weather?.airPressure?.meanSeaLevelMillibars ?? 0) * 0.02953).toFixed(2)} in`}
               description={pressureLabel(
                 weather?.airPressure?.meanSeaLevelMillibars?.toString(),
               )}

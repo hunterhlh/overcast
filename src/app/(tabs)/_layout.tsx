@@ -10,8 +10,8 @@ export default function TabLayout() {
         tabBarStyle: {
           position: "absolute",
           marginHorizontal: 24,
-          bottom: 25,
-          height: 80,
+          bottom: 30,
+          height: 70,
           paddingBottom: 0,
           backgroundColor: "rgba(255,255,255,.95)",
           borderTopWidth: 0,
@@ -20,7 +20,7 @@ export default function TabLayout() {
           borderRadius: 34,
         },
         tabBarItemStyle: {
-          paddingTop: 12,
+          paddingTop: 11,
           justifyContent: "center",
         },
       }}

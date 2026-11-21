@@ -113,7 +113,7 @@ export default function HomeScreen() {
       day.displayDate.day,
     ),
     condition: day.daytimeForecast.weatherCondition.description.text,
-    rainPercent: day.daytimeForecast.precipitation.percent,
+    rainPercent: day.daytimeForecast.precipitation.probability.percent,
     tempHigh: Math.round(day.maxTemperature.degrees),
     tempLow: Math.round(day.minTemperature.degrees),
   }));
@@ -420,10 +420,10 @@ const styles = StyleSheet.create({
     fontWeight: "300",
   },
   dayRain: {
-    width: 30,
+    width: 40,
     fontFamily: FONT,
     fontSize: 15,
-    color: "#62a0ca",
+    color: "#1799f0",
   },
   dayHigh: {
     width: 40,

@@ -11,10 +11,12 @@ export async function getSummary(forecastText: string) {
       max_tokens: 200,
       output_config: { effort: "low" },
       thinking: { type: "disabled" },
+      system:
+        "You write one-line weather summaries for a weather app. Reply with exactly one casual sentence under 20 words summarizing the 7 day forcast. Use day names like Monday or Tuesday, never dates. No reasoning, no intro, no quotes. Just the sentence.",
       messages: [
         {
           role: "user",
-          content: `Here is the forecast:\n${forecastText}\n\nWrite one casual sentence, under 15 words, summarizing what's coming. No intro, just the sentence.`,
+          content: `Here is the forecast:\n${forecastText}\n\n`,
         },
       ],
     }),

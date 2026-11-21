@@ -6,6 +6,7 @@ export async function getCurrentWeather(lat: number, long: number) {
 
   const res = await fetch(urlCurrent);
   const data = await res.json();
+  console.log("Current Log:");
   console.log(JSON.stringify(data, null, 2));
 
   const urlHourly =
