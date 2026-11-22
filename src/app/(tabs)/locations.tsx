@@ -4,6 +4,7 @@ import { getCurrentWeather } from "@/services/weatherAPI";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Platform,
   RefreshControl,
   ScrollView,
@@ -88,6 +89,14 @@ export default function Locations() {
     load();
   }, []);
 
+  if (!weatherLocal) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
   return (
     <LinearGradient
       colors={theme.colors}
@@ -116,20 +125,24 @@ export default function Locations() {
           />
           {places.map((place) => (
             <View key={`${place.city}-${place.state}`} style={styles.placeCard}>
-              <Text style={[styles.placeLocation, { color: theme.text }]}>
-                {place.isCurrent ? "My Location" : `${place.city}`}
-              </Text>
-              <Text style={{ color: theme.text }}>
-                {place.weather?.weatherCondition?.description?.text ?? "null"}
-              </Text>
-              <Text style={{ color: theme.text }}>
-                Current: {Math.round(place.weather.temperature.degrees ?? 0)}°
-              </Text>
-              <Text style={{ color: theme.text }}>
-                H: {Math.round(place.high ?? 0)}°
-              </Text>
-              <Text style={{ color: theme.text }}>
-                L: {Math.round(place.low ?? 0)}°
+              <View style={styles.placeLeft}>
+                <Text style={[styles.placeLocation, { color: theme.text }]}>
+                  {place.isCurrent ? "My Location" : `${place.city}`}
+                </Text>
+                <Text style={[styles.description, { color: theme.text }]}>
+                  {place.weather?.weatherCondition?.description?.text ?? "null"}
+                </Text>
+                <View style={styles.highlowCard}>
+                  <Text style={[styles.highLow, { color: theme.text }]}>
+                    H: {Math.round(place.high ?? 0)}°
+                  </Text>
+                  <Text style={[styles.highLow, { color: theme.text }]}>
+                    L: {Math.round(place.low ?? 0)}°
+                  </Text>
+                </View>
+              </View>
+              <Text style={[styles.currentTemp, { color: theme.text }]}>
+                {Math.round(place.weather?.temperature?.degrees ?? 0)}°
               </Text>
             </View>
           ))}
@@ -174,7 +187,9 @@ const styles = StyleSheet.create({
     marginBottom: "3%",
   },
   placeCard: {
-    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     alignSelf: "stretch",
     backgroundColor: "rgba(255, 255, 255, 0.25)",
     borderRadius: 25,
@@ -187,6 +202,30 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "700",
     paddingTop: 5,
-    marginBottom: 20,
+    marginBottom: 3,
+  },
+  description: {
+    fontFamily: FONT,
+    fontSize: 20,
+    fontWeight: "300",
+    marginBottom: 15,
+  },
+  currentTemp: {
+    fontFamily: FONT,
+    fontSize: 60,
+    fontWeight: "300",
+  },
+  highlowCard: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  highLow: {
+    fontFamily: FONT,
+    fontSize: 16,
+    fontWeight: "400",
+  },
+  placeLeft: {
+    flex: 1,
+    gap: 4,
   },
 });
