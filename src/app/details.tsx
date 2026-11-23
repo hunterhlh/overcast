@@ -4,6 +4,7 @@ import { getCurrentWeather } from "@/services/weatherAPI";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Platform,
   RefreshControl,
   ScrollView,
@@ -136,6 +137,14 @@ export default function Details() {
   useEffect(() => {
     load();
   }, []);
+
+  if (!weather) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <LinearGradient
