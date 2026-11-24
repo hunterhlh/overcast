@@ -3,6 +3,7 @@ import { getUserLocation } from "@/services/location";
 import { getStyling } from "@/services/styling";
 import { getCurrentWeather } from "@/services/weatherAPI";
 import { LinearGradient } from "expo-linear-gradient";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Platform,
@@ -23,6 +24,7 @@ export default function Chat() {
   const [stateLocal, setStateLocal] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [text, onChangeText] = useState("");
+  const { question } = useLocalSearchParams();
 
   const [messages, setMessages] = useState<any[]>([]);
 
@@ -31,8 +33,8 @@ export default function Chat() {
     weatherLocal?.isDaytime,
   );
 
-  async function sendMessage() {
-    const newMessages = [...messages, { role: "user", content: text }];
+  async function sendMessage(messageText: string) {
+    const newMessages = [...messages, { role: "user", content: messageText }];
     setMessages(newMessages);
     onChangeText("");
 
@@ -62,7 +64,8 @@ export default function Chat() {
 
   useEffect(() => {
     load();
-  }, []);
+    if (question) sendMessage(question as string);
+  }, [question]);
 
   return (
     <LinearGradient
@@ -94,16 +97,16 @@ export default function Chat() {
               </Text>
             </View>
           ))}
-          <TextInput
-            onChangeText={onChangeText}
-            value={text}
-            style={[styles.inputBar, { color: theme.text }]}
-            placeholderTextColor={theme.text + "70"}
-            placeholder="Ask about the weather"
-            onSubmitEditing={sendMessage}
-            returnKeyType="search"
-          />
         </ScrollView>
+        <TextInput
+          onChangeText={onChangeText}
+          value={text}
+          style={[styles.inputBar, { color: theme.text }]}
+          placeholderTextColor={theme.text + "70"}
+          placeholder="Ask about the weather"
+          onSubmitEditing={() => sendMessage(text)}
+          returnKeyType="search"
+        />
       </SafeAreaView>
     </LinearGradient>
   );
@@ -147,15 +150,13 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   inputBar: {
-    flex: 1,
-    alignSelf: "stretch",
     backgroundColor: "rgba(255, 255, 255, 0.25)",
     borderRadius: 25,
     paddingVertical: 16,
     paddingHorizontal: 16,
     fontFamily: FONT,
     fontSize: 17,
-    marginTop: "6%",
-    marginBottom: "3%",
+    marginHorizontal: 24,
+    marginBottom: 120,
   },
 });

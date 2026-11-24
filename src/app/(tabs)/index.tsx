@@ -209,8 +209,16 @@ export default function HomeScreen() {
           </Text>
           <View style={styles.inputRow}>
             <TextInput
-              onChangeText={onChangeText}
               value={text}
+              onChangeText={onChangeText}
+              onSubmitEditing={() => {
+                if (!text) return;
+                router.navigate({
+                  pathname: "/chat",
+                  params: { question: text },
+                });
+                onChangeText("");
+              }}
               style={[styles.aiBar, { color: theme.text }]}
               placeholderTextColor={theme.text + "70"}
               placeholder="Ask about the weather"

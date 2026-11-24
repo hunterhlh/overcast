@@ -77,6 +77,21 @@ export default function Locations() {
       cordsLocal.locat.longitude,
     );
     setWeatherCurrentLocal(weatherDataLocal.current);
+
+    const currentPlace = {
+      city: cordsLocal.city,
+      state: cordsLocal.state,
+      lat: cordsLocal.locat.latitude,
+      lng: cordsLocal.locat.longitude,
+      weather: weatherDataLocal.current,
+      condition: weatherDataLocal?.current?.weatherCondition?.text,
+      high:
+        weatherDataLocal.daily?.forecastDays?.[0]?.maxTemperature?.degrees ?? 0,
+      low:
+        weatherDataLocal.daily?.forecastDays?.[0]?.minTemperature?.degrees ?? 0,
+    };
+
+    setPlaces([currentPlace]);
   }
 
   const onRefresh = async () => {
