@@ -14,14 +14,17 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const FONT = Platform.select({ ios: "Helvetica Neue", android: "sans-serif" });
 
 export default function Chat() {
   const [weatherLocal, setWeatherCurrentLocal] = useState<any>(null);
+  const [weatherDaily, setWeatherCurrentDaily] = useState<any>(null);
   const [cityLocal, setCityLocal] = useState<any>(null);
   const [stateLocal, setStateLocal] = useState<any>(null);
+
   const [refreshing, setRefreshing] = useState(false);
   const [text, onChangeText] = useState("");
   const { question } = useLocalSearchParams();
@@ -38,7 +41,13 @@ export default function Chat() {
     setMessages(newMessages);
     onChangeText("");
 
-    const claudeReply = await getChatReply(newMessages, weatherLocal);
+    const claudeReply = await getChatReply(
+      newMessages,
+      weatherDaily,
+      weatherLocal,
+      cityLocal,
+      stateLocal,
+    );
     setMessages([...newMessages, { role: "assistant", content: claudeReply }]);
   }
 
@@ -54,6 +63,7 @@ export default function Chat() {
       cordsLocal.locat.longitude,
     );
     setWeatherCurrentLocal(weatherDataLocal.current);
+    setWeatherCurrentDaily(weatherDataLocal.daily);
   }
 
   const onRefresh = async () => {
@@ -74,39 +84,45 @@ export default function Chat() {
       style={styles.gradient}
     >
       <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.content}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={-100}
         >
-          {messages.map((message, i) => (
-            <View
-              key={i}
-              style={[
-                styles.bubble,
-                message.role === "user"
-                  ? styles.userBubble
-                  : styles.claudeBubble,
-              ]}
-            >
-              <Text style={[styles.bubbleText, { color: theme.text }]}>
-                {message.content}
-              </Text>
-            </View>
-          ))}
-        </ScrollView>
-        <TextInput
-          onChangeText={onChangeText}
-          value={text}
-          style={[styles.inputBar, { color: theme.text }]}
-          placeholderTextColor={theme.text + "70"}
-          placeholder="Ask about the weather"
-          onSubmitEditing={() => sendMessage(text)}
-          returnKeyType="search"
-        />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.content}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
+            {messages.map((message, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.bubble,
+                  message.role === "user"
+                    ? styles.userBubble
+                    : styles.claudeBubble,
+                ]}
+              >
+                <Text style={[styles.bubbleText, { color: theme.text }]}>
+                  {message.content}
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
+          <TextInput
+            onChangeText={onChangeText}
+            value={text}
+            style={[styles.inputBar, { color: theme.text }]}
+            placeholderTextColor={theme.text + "70"}
+            placeholder="Ask about the weather"
+            onSubmitEditing={() => sendMessage(text)}
+            returnKeyType="search"
+          />
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </LinearGradient>
   );

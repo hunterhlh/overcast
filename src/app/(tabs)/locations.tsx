@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Platform,
+  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -13,6 +14,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const FONT = Platform.select({ ios: "Helvetica Neue", android: "sans-serif" });
@@ -63,6 +65,17 @@ export default function Locations() {
 
     setPlaces([...places, newPlace]);
     onChangeText("");
+  }
+
+  function removePlace(placeToRemove: any) {
+    const updatedPlaces = places.filter(
+      (place) =>
+        !(
+          place.city === placeToRemove.city &&
+          place.state === placeToRemove.state
+        ),
+    );
+    setPlaces(updatedPlaces);
   }
 
   async function load() {
@@ -138,29 +151,55 @@ export default function Locations() {
             onSubmitEditing={searchCity}
             returnKeyType="search"
           />
-          {places.map((place) => (
-            <View key={`${place.city}-${place.state}`} style={styles.placeCard}>
-              <View style={styles.placeLeft}>
-                <Text style={[styles.placeLocation, { color: theme.text }]}>
-                  {place.isCurrent ? "My Location" : `${place.city}`}
-                </Text>
-                <Text style={[styles.description, { color: theme.text }]}>
-                  {place.weather?.weatherCondition?.description?.text ?? "null"}
-                </Text>
-                <View style={styles.highlowCard}>
-                  <Text style={[styles.highLow, { color: theme.text }]}>
-                    H: {Math.round(place.high ?? 0)}°
+          {places.map((place) => {
+            const placeTheme = getStyling(
+              place.weather?.weatherCondition?.type,
+              place.weather?.isDaytime,
+            );
+            return (
+              <ReanimatedSwipeable
+                key={`${place.city}-${place.state}`}
+                enabled={!place.isCurrent}
+                containerStyle={{ alignSelf: "stretch", marginTop: "5%" }}
+                renderRightActions={() => (
+                  <Pressable
+                    style={styles.deleteButton}
+                    onPress={() => removePlace(place)}
+                  >
+                    <Text style={{ color: "white" }}>Delete</Text>
+                  </Pressable>
+                )}
+              >
+                <LinearGradient
+                  colors={placeTheme.colors}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.placeCard}
+                >
+                  <View style={styles.placeLeft}>
+                    <Text style={[styles.placeLocation, { color: theme.text }]}>
+                      {place.isCurrent ? "My Location" : `${place.city}`}
+                    </Text>
+                    <Text style={[styles.description, { color: theme.text }]}>
+                      {place.weather?.weatherCondition?.description?.text ??
+                        "null"}
+                    </Text>
+                    <View style={styles.highlowCard}>
+                      <Text style={[styles.highLow, { color: theme.text }]}>
+                        H: {Math.round(place.high ?? 0)}°
+                      </Text>
+                      <Text style={[styles.highLow, { color: theme.text }]}>
+                        L: {Math.round(place.low ?? 0)}°
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={[styles.currentTemp, { color: theme.text }]}>
+                    {Math.round(place.weather?.temperature?.degrees ?? 0)}°
                   </Text>
-                  <Text style={[styles.highLow, { color: theme.text }]}>
-                    L: {Math.round(place.low ?? 0)}°
-                  </Text>
-                </View>
-              </View>
-              <Text style={[styles.currentTemp, { color: theme.text }]}>
-                {Math.round(place.weather?.temperature?.degrees ?? 0)}°
-              </Text>
-            </View>
-          ))}
+                </LinearGradient>
+              </ReanimatedSwipeable>
+            );
+          })}
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -210,7 +249,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     paddingVertical: 18,
     paddingHorizontal: 20,
-    marginTop: "5%",
   },
   placeLocation: {
     fontFamily: FONT,
@@ -242,5 +280,13 @@ const styles = StyleSheet.create({
   placeLeft: {
     flex: 1,
     gap: 4,
+  },
+  deleteButton: {
+    backgroundColor: "#eb827b",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 90,
+    borderRadius: 25,
+    marginLeft: 10,
   },
 });

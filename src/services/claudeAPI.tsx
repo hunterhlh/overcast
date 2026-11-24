@@ -32,7 +32,13 @@ export async function getSummary(forecastText: string) {
   return textBlock?.text ?? null;
 }
 
-export async function getChatReply(messages: any[], weather: any) {
+export async function getChatReply(
+  messages: any[],
+  weatherDaily: any,
+  weatherCurrent: any,
+  City: string,
+  State: string,
+) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -52,9 +58,10 @@ export async function getChatReply(messages: any[], weather: any) {
         - If the question isn't about the weather (math, homework, coding, general chat, etc.), don't answer it. Reply with: "I can only help with weather questions. Try asking about today's forecast!"
         - Only use the data provided. If the answer isn't in the data, say you don't have that information. Don't guess or make up numbers.
         - Keep answers short and casual, 1 to 3 sentences.
+        - Your location is: City ${City}, ${State}
 
 Weather data:
-${JSON.stringify(weather)}`,
+Hourly: ${JSON.stringify(weatherDaily)}, Current: ${JSON.stringify(weatherCurrent)}`,
       messages: messages,
     }),
   });
