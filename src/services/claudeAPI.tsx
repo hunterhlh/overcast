@@ -31,3 +31,31 @@ export async function getSummary(forecastText: string) {
   const textBlock = data.content.find((block: any) => block.type === "text");
   return textBlock?.text ?? null;
 }
+
+export async function getChatReply(messages: any[], weather: any) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": process.env.EXPO_PUBLIC_CLAUDE_API_KEY!,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "claude-haiku-5-5",
+      max_tokens: 300,
+      output_config: { effort: "low" },
+      thinking: { type: "disabled" },
+      system: `You're a friendly weather assistant in a weather app. Keep answers short and casual. Current weather: ${JSON.stringify(weather)}`,
+      messages: messages,
+    }),
+  });
+
+  if (!res.ok) {
+    console.log("Claude error:", res.status, await res.text());
+    return null;
+  }
+
+  const data = await res.json();
+  const textBlock = data.content.find((block: any) => block.type === "text");
+  return textBlock?.text ?? null;
+}
