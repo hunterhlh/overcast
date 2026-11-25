@@ -33,6 +33,11 @@ export default function Locations() {
   const [cityLocal, setCityLocal] = useState<any>(null);
   const [stateLocal, setStateLocal] = useState<any>(null);
 
+  const isDay = weatherLocal?.isDaytime ?? true;
+
+  const pageBackground = isDay ? "#f6f1e7" : "#1f2226";
+  const pageText = isDay ? "#151b21" : "#ebeff4";
+
   const [places, setPlaces] = useState<any[]>([]);
 
   const theme = getStyling(
@@ -126,83 +131,84 @@ export default function Locations() {
   }
 
   return (
-    <LinearGradient
-      colors={theme.colors}
-      locations={[0, 0.45, 1]}
-      style={styles.gradient}
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: pageBackground }}
+      edges={["top"]}
     >
-      <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.content}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        >
-          <Text style={[styles.places, { color: theme.text }]}>Places</Text>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <Text style={[styles.places, { color: theme.text }]}>Places</Text>
 
-          <TextInput
-            onChangeText={onChangeText}
-            value={text}
-            style={[styles.searchBar, { color: theme.text }]}
-            placeholderTextColor={theme.text + "70"}
-            placeholder="Search for a City"
-            onSubmitEditing={searchCity}
-            returnKeyType="search"
-          />
-          {places.map((place) => {
-            const placeTheme = getStyling(
-              place.weather?.weatherCondition?.type,
-              place.weather?.isDaytime,
-            );
-            return (
-              <ReanimatedSwipeable
-                key={`${place.city}-${place.state}`}
-                enabled={!place.isCurrent}
-                containerStyle={{ alignSelf: "stretch", marginTop: "5%" }}
-                renderRightActions={() => (
-                  <Pressable
-                    style={styles.deleteButton}
-                    onPress={() => removePlace(place)}
-                  >
-                    <Text style={{ color: "white" }}>Delete</Text>
-                  </Pressable>
-                )}
-              >
-                <LinearGradient
-                  colors={placeTheme.colors}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.placeCard}
+        <TextInput
+          onChangeText={onChangeText}
+          value={text}
+          style={[styles.searchBar, { color: theme.text }]}
+          placeholderTextColor={theme.text + "70"}
+          placeholder="Search for a City"
+          onSubmitEditing={searchCity}
+          returnKeyType="search"
+        />
+        {places.map((place) => {
+          const placeTheme = getStyling(
+            place.weather?.weatherCondition?.type,
+            place.weather?.isDaytime,
+          );
+          return (
+            <ReanimatedSwipeable
+              key={`${place.city}-${place.state}`}
+              enabled={!place.isCurrent}
+              containerStyle={{ alignSelf: "stretch", marginTop: "5%" }}
+              renderRightActions={() => (
+                <Pressable
+                  style={styles.deleteButton}
+                  onPress={() => removePlace(place)}
                 >
-                  <View style={styles.placeLeft}>
-                    <Text style={[styles.placeLocation, { color: theme.text }]}>
-                      {place.isCurrent ? "My Location" : `${place.city}`}
-                    </Text>
-                    <Text style={[styles.description, { color: theme.text }]}>
-                      {place.weather?.weatherCondition?.description?.text ??
-                        "null"}
-                    </Text>
-                    <View style={styles.highlowCard}>
-                      <Text style={[styles.highLow, { color: theme.text }]}>
-                        H: {Math.round(place.high ?? 0)}°
-                      </Text>
-                      <Text style={[styles.highLow, { color: theme.text }]}>
-                        L: {Math.round(place.low ?? 0)}°
-                      </Text>
-                    </View>
-                  </View>
-                  <Text style={[styles.currentTemp, { color: theme.text }]}>
-                    {Math.round(place.weather?.temperature?.degrees ?? 0)}°
+                  <Text style={{ color: "white" }}>Delete</Text>
+                </Pressable>
+              )}
+            >
+              <LinearGradient
+                colors={placeTheme.colors}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.placeCard}
+              >
+                <View style={styles.placeLeft}>
+                  <Text
+                    style={[styles.placeLocation, { color: placeTheme.text }]}
+                  >
+                    {place.isCurrent ? "My Location" : `${place.city}`}
                   </Text>
-                </LinearGradient>
-              </ReanimatedSwipeable>
-            );
-          })}
-        </ScrollView>
-      </SafeAreaView>
-    </LinearGradient>
+                  <Text
+                    style={[styles.description, { color: placeTheme.text }]}
+                  >
+                    {place.weather?.weatherCondition?.description?.text ??
+                      "null"}
+                  </Text>
+                  <View style={styles.highlowCard}>
+                    <Text style={[styles.highLow, { color: placeTheme.text }]}>
+                      H: {Math.round(place.high ?? 0)}°
+                    </Text>
+                    <Text style={[styles.highLow, { color: placeTheme.text }]}>
+                      L: {Math.round(place.low ?? 0)}°
+                    </Text>
+                  </View>
+                </View>
+                <Text style={[styles.currentTemp, { color: placeTheme.text }]}>
+                  {Math.round(place.weather?.temperature?.degrees ?? 0)}°
+                </Text>
+              </LinearGradient>
+            </ReanimatedSwipeable>
+          );
+        })}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -245,10 +251,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "stretch",
-    backgroundColor: "rgba(255, 255, 255, 0.25)",
     borderRadius: 25,
     paddingVertical: 18,
     paddingHorizontal: 20,
+    overflow: "hidden",
   },
   placeLocation: {
     fontFamily: FONT,
