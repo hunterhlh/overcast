@@ -12,27 +12,27 @@ export function getStyling(
     case "CLEAR":
     case "MOSTLY_CLEAR":
       return isDaytime
-        ? { colors: ["#8ec2fd", "#92d5f4", "#f9edd5"], text: "#151b21" }
+        ? { colors: ["#82bcfc", "#98d8f9", "#f9edd5"], text: "#151b21" }
         : { colors: ["#0c0a28", "#0f1a3d", "#44294c"], text: "#ebeff4" };
 
     // Partly cloudy
     case "PARTLY_CLOUDY":
       return isDaytime
-        ? { colors: ["#9ac2e9", "#c3e4f2", "#feebd6"], text: "#151b21" }
+        ? { colors: ["#98bcdc", "#c7d3dc", "#f0e6da"], text: "#151b21" }
         : { colors: ["#121a33", "#1f2a48", "#3d3a55"], text: "#ebeff4" };
 
     // Cloudy
     case "MOSTLY_CLOUDY":
     case "CLOUDY":
       return isDaytime
-        ? { colors: ["#b9bcd1", "#b5c3d1", "#e5ddd0"], text: "#151b21" }
+        ? { colors: ["#a6abb2", "#c0c5c9", "#dee2e5"], text: "#151b21" }
         : { colors: ["#1a1d26", "#262b36", "#3a3d47"], text: "#ebeff4" };
 
     // Windy
     case "WINDY":
     case "WIND_AND_RAIN":
       return isDaytime
-        ? { colors: ["#95cfe1", "#b3e3dd", "#e3f5df"], text: "#151b21" }
+        ? { colors: ["#82ccd5", "#b2e2e2", "#def4ed"], text: "#151b21" }
         : { colors: ["#0d1f2a", "#163341", "#2c4b52"], text: "#ebeff4" };
 
     // Light rain
@@ -44,7 +44,7 @@ export function getStyling(
     case "RAIN":
     case "LIGHT_RAIN":
       return isDaytime
-        ? { colors: ["#adc0d8", "#b3d4e2", "#b5d6d3"], text: "#151b21" }
+        ? { colors: ["#7c99da", "#8ba4c5", "#98c1dd"], text: "#151b21" }
         : { colors: ["#141c2a", "#1d2b3b", "#2d3f4c"], text: "#ebeff4" };
 
     // Heavy rain
@@ -53,7 +53,7 @@ export function getStyling(
     case "HEAVY_RAIN":
     case "RAIN_PERIODICALLY_HEAVY":
       return isDaytime
-        ? { colors: ["#0d1b2d", "#053343", "#145154"], text: "#ebeff4" }
+        ? { colors: ["#0d1321", "#17273c", "#25435b"], text: "#ebeff4" }
         : { colors: ["#070d17", "#0a1c26", "#12333a"], text: "#ebeff4" };
 
     // Snow
@@ -73,7 +73,7 @@ export function getStyling(
     case "BLOWING_SNOW":
     case "RAIN_AND_SNOW":
       return isDaytime
-        ? { colors: ["#bbcde1", "#d7e8f1", "#f7f3fe"], text: "#151b21" }
+        ? { colors: ["#b4dce7", "#d8ebf6", "#f8f2ff"], text: "#151b21" }
         : { colors: ["#1b2233", "#2b3549", "#4a5268"], text: "#ebeff4" };
 
     // Storms
@@ -88,10 +88,9 @@ export function getStyling(
         ? { colors: ["#100a23", "#2b1540", "#5e244d"], text: "#ebeff4" }
         : { colors: ["#08061a", "#1a0f2e", "#3d1838"], text: "#ebeff4" };
 
-    // TYPE_UNSPECIFIED or anything new Google adds
     default:
       return isDaytime
-        ? { colors: ["#b9bcd1", "#b5c3d1", "#e5ddd0"], text: "#151b21" }
+        ? { colors: ["#a6abb2", "#c0c5c9", "#dee2e5"], text: "#151b21" }
         : { colors: ["#1a1d26", "#262b36", "#3a3d47"], text: "#ebeff4" };
   }
 }

@@ -7,6 +7,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Platform,
+  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -97,6 +98,33 @@ export default function Chat() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
           >
+            <View style={styles.header}>
+              <View style={styles.headerSide} />
+
+              <View style={styles.headerCenter}>
+                <Text style={[styles.heading, { color: theme.text }]}>
+                  Ask Nimbus
+                </Text>
+
+                <View style={styles.currentPill}>
+                  <Text style={[styles.currentText, { color: theme.text }]}>
+                    {Math.round(weatherLocal?.temperature?.degrees ?? 0)}° ·{" "}
+                    {cityLocal} ·{" "}
+                    {weatherLocal?.weatherCondition?.description?.text}
+                  </Text>
+                </View>
+              </View>
+
+              <Pressable
+                style={styles.headerSide}
+                onPress={() => setMessages([])}
+              >
+                <Text style={[styles.clearText, { color: theme.text }]}>
+                  Clear
+                </Text>
+              </Pressable>
+            </View>
+
             {messages.map((message, i) => (
               <View
                 key={i}
@@ -137,6 +165,53 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingHorizontal: 24,
     paddingBottom: 40,
+  },
+  headerCenter: {
+    flex: 2,
+    alignItems: "center",
+    gap: 6,
+  },
+  currentPill: {
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    backgroundColor: "rgba(255, 255, 255, 0.45)",
+  },
+  currentText: {
+    fontFamily: FONT,
+    fontSize: 13,
+    fontWeight: "500",
+  },
+  clearText: {
+    fontFamily: FONT,
+    fontSize: 16,
+    textAlign: "right",
+    opacity: 0.7,
+  },
+  heading: {
+    fontFamily: FONT,
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "stretch",
+  },
+  headerSide: {
+    flex: 1,
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+  },
+  currentCard: {
+    alignSelf: "stretch",
+    alignItems: "center",
+    paddingVertical: 14,
+    backgroundColor: "rgba(255, 255, 255, 0.25)",
+    borderRadius: 24,
+    marginTop: 15,
   },
   messageList: {
     alignSelf: "stretch",

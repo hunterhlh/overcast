@@ -35,7 +35,7 @@ export default function Locations() {
 
   const isDay = weatherLocal?.isDaytime ?? true;
 
-  const pageBackground = isDay ? "#f6f1e7" : "#1f2226";
+  const pageBackground = isDay ? "#f5f5f5" : "#1f2226";
   const pageText = isDay ? "#151b21" : "#ebeff4";
 
   const [places, setPlaces] = useState<any[]>([]);
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flex: 1,
     alignSelf: "stretch",
-    backgroundColor: "rgba(255, 255, 255, 0.25)",
+    backgroundColor: "rgba(255, 255, 255)",
     borderRadius: 25,
     paddingVertical: 16,
     paddingHorizontal: 16,
